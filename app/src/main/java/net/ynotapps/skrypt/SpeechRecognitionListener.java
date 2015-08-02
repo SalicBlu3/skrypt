@@ -6,11 +6,7 @@ import android.speech.SpeechRecognizer;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
-/**
- * Created by dougylee on 2/08/15.
- */
 public abstract class SpeechRecognitionListener implements RecognitionListener {
 
     public abstract void handleFeedback(String feedback);
@@ -59,14 +55,10 @@ public abstract class SpeechRecognitionListener implements RecognitionListener {
     public void onEvent(int eventType, Bundle params) {
     }
 
-    public String getBestResult(Bundle results) {
+    private String getBestResult(Bundle results) {
 
         // Get lists from bundle
         ArrayList<String> resultsList = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-        float[] confidenceArray = results.getFloatArray(SpeechRecognizer.CONFIDENCE_SCORES);
-
-        Log.d("Bundle", Arrays.toString(resultsList.toArray()));
-        Log.d("Bundle Confidence", Arrays.toString(confidenceArray));
 
         if (resultsList.size() > 0) {
             return resultsList.get(0);

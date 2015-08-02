@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
@@ -17,14 +17,12 @@ import butterknife.OnClick;
 /**
  *  Captures data
  */
-public class SkryptActivity extends ActionBarActivity {
-
-    @InjectView(R.id.tv_feedback)
-    TextView feedbackView;
+public class SkryptActivity extends AppCompatActivity {
 
     @InjectView(R.id.button_start)
     Button start;
-
+    @InjectView(R.id.tv_feedback)
+    private TextView feedbackView;
     private SpeechRecognizer speechRecognizer;
     private Intent recognizerIntent;
 
