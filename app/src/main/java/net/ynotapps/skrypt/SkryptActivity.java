@@ -1,20 +1,14 @@
 package net.ynotapps.skrypt;
 
 import android.content.Intent;
-import android.speech.RecognitionListener;
+import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.ToggleButton;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -23,19 +17,15 @@ import butterknife.OnClick;
 /**
  *  Captures data
  */
-public class SkryptActivity extends ActionBarActivity implements RecognitionListener {
+public class SkryptActivity extends ActionBarActivity {
 
     @InjectView(R.id.tv_feedback)
-    TextView feedback;
+    TextView feedbackView;
 
     @InjectView(R.id.button_start)
     Button start;
 
-    @InjectView(R.id.toggle)
-    ToggleButton toggle;
-
     private SpeechRecognizer speechRecognizer;
-    private boolean isListening = false;
     private Intent recognizerIntent;
 
     @Override
@@ -49,29 +39,37 @@ public class SkryptActivity extends ActionBarActivity implements RecognitionList
 
     private void setupSpeechRecognizer() {
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
-        speechRecognizer.setRecognitionListener(this);
         recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
-                "en");
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
                 this.getPackageName());
-        recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
-        recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 30000);
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 10000);
+
+        speechRecognizer.setRecognitionListener(new SpeechRecognitionListener() {
+            @Override
+            public void handleFeedback(String feedback) {
+            }
+
+            @Override
+            public void handleResult(String result) {
+                feedbackView.setText(" " + result);
+            }
+        });
     }
 
 
     @OnClick(R.id.button_start)
     public void start() {
-        if (isListening) {
-            speechRecognizer.stopListening();
-            isListening = false;
-        } else {
-            speechRecognizer.startListening(recognizerIntent);
-            isListening = true;
-        }
+        speechRecognizer.startListening(recognizerIntent);
+    }
 
-        toggle.setChecked(isListening);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        speechRecognizer.destroy();
     }
 
     @Override
@@ -94,78 +92,5 @@ public class SkryptActivity extends ActionBarActivity implements RecognitionList
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    /*******************
-     *
-     *                  Speech Recognizer
-     *
-     *******************/
-
-    @Override
-    public void onReadyForSpeech(Bundle params) {
-        feedback.setText("READY...");
-        Log.d("Speech", "Ready");
-    }
-
-    @Override
-    public void onBeginningOfSpeech() {
-        feedback.setText("");
-        Log.d("Speech", "Listening");
-    }
-
-    @Override
-    public void onRmsChanged(float rmsdB) {}
-
-    @Override
-    public void onBufferReceived(byte[] buffer) {}
-
-    @Override
-    public void onEndOfSpeech() {
-        Log.d("Speech", "End Speech");
-    }
-
-    @Override
-    public void onError(int error) {}
-
-    @Override
-    public void onResults(Bundle results) {
-        final String bestResult = getBestResult(results);
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                feedback.setText(bestResult);
-            }
-        });
-    }
-
-    @Override
-    public void onPartialResults(Bundle results) {}
-
-    @Override
-    public void onEvent(int eventType, Bundle params) {}
-
-    public String getBestResult(Bundle results) {
-
-        // Get lists from bundle
-        ArrayList<String> resultsList = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-        float[] confidenceArray = results.getFloatArray(SpeechRecognizer.CONFIDENCE_SCORES);
-
-        Log.d("Bundle", Arrays.toString(resultsList.toArray()));
-        Log.d("Bundle", Arrays.toString(confidenceArray));
-
-        // Iterate through to find peak confidence
-        String result = "";
-        Float bestConfidence = null;
-
-        for (int i = 0; i < confidenceArray.length; i++) {
-            float confidence = confidenceArray[i];
-            if (bestConfidence == null) {
-                bestConfidence = confidence;
-            } else if (bestConfidence < confidence) {
-                result = resultsList.get(i);
-            }
-        }
-        return result;
     }
 }
