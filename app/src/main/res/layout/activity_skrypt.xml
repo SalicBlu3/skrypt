@@ -1,0 +1,35 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".SkryptActivity">
+    <TextView
+        android:id="@+id/tv_feedback"
+        android:layout_width="match_parent"
+        android:layout_above="@+id/button_start"
+        android:text="Sup"
+        android:padding="16dp"
+        android:singleLine="true"
+        android:gravity="center_vertical|right"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:layout_height="match_parent"/>
+
+    <Button
+        android:id="@+id/button_start"
+        android:layout_width="match_parent"
+        style="?android:textAppearanceMedium"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#373393"
+        android:text="Start"
+        android:padding="32dp"
+        android:textAllCaps="true"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"/>
+
+    <ToggleButton
+        android:id="@+id/toggle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>
