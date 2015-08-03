@@ -7,21 +7,21 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-public abstract class SpeechRecognitionListener implements RecognitionListener {
+public class SpeechRecognitionListener implements RecognitionListener {
 
-    public abstract void handleFeedback(String feedback);
+    private ResultHandler resultHandler;
 
-    public abstract void handleResult(String feedback);
+    public SpeechRecognitionListener(ResultHandler resultHandler) {
+        this.resultHandler = resultHandler;
+    }
 
     @Override
     public void onReadyForSpeech(Bundle params) {
-        handleFeedback("READY...");
         Log.d("Speech", "Ready");
     }
 
     @Override
     public void onBeginningOfSpeech() {
-        handleFeedback("");
         Log.d("Speech", "Listening");
     }
 
@@ -35,6 +35,7 @@ public abstract class SpeechRecognitionListener implements RecognitionListener {
 
     @Override
     public void onEndOfSpeech() {
+        resultHandler.onComplete();
         Log.d("Speech", "End Speech");
     }
 
@@ -48,7 +49,7 @@ public abstract class SpeechRecognitionListener implements RecognitionListener {
 
     @Override
     public void onPartialResults(Bundle results) {
-        handleResult(getBestResult(results));
+        resultHandler.handlePartialResult(getBestResult(results));
     }
 
     @Override
@@ -65,5 +66,16 @@ public abstract class SpeechRecognitionListener implements RecognitionListener {
         } else {
             return "";
         }
+    }
+
+    public interface ResultHandler {
+
+        void onResult(String feedback);
+
+        void handlePartialResult(String feedback);
+
+        void onStartSpeech();
+
+        void onComplete();
     }
 }

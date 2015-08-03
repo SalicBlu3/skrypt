@@ -32,4 +32,12 @@ public class Skrypt extends SugarRecord {
     public void setText(String text) {
         this.text = text;
     }
+
+    @Override
+    public String toString() {
+        return "Skrypt{" +
+                "timestamp=" + timestamp +
+                ", text='" + text + '\'' +
+                '}';
+    }
 }
