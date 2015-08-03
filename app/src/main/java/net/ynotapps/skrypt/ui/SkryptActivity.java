@@ -1,4 +1,4 @@
-package net.ynotapps.skrypt;
+package net.ynotapps.skrypt.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
+
+import net.ynotapps.skrypt.R;
+import net.ynotapps.skrypt.utils.SpeechRecognitionListener;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -21,8 +24,10 @@ public class SkryptActivity extends AppCompatActivity {
 
     @InjectView(R.id.button_start)
     Button start;
+
     @InjectView(R.id.tv_feedback)
     private TextView feedbackView;
+
     private SpeechRecognizer speechRecognizer;
     private Intent recognizerIntent;
 

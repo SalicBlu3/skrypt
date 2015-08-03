@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="net.ynotapps.skrypt" >
+<manifest package="net.ynotapps.skrypt"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
 
+    <!--  Permission for Voice Recognition -->
     <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <application
+        android:name=".SkryptApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".SkryptActivity"
+            android:name=".ui.SkryptActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,6 +20,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Details for Sugar ORM db -->
+        <meta-data android:name="DATABASE" android:value="skrypt.db" />
+        <meta-data android:name="VERSION" android:value="1" />
+        <meta-data android:name="QUERY_LOG" android:value="true" />
+        <meta-data android:name="DOMAIN_PACKAGE_NAME" android:value="net.ynotapps.skrypt" />
+
     </application>
 
 </manifest>

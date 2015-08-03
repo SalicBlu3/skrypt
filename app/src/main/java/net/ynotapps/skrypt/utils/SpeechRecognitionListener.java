@@ -1,4 +1,4 @@
-package net.ynotapps.skrypt;
+package net.ynotapps.skrypt.utils;
 
 import android.os.Bundle;
 import android.speech.RecognitionListener;
