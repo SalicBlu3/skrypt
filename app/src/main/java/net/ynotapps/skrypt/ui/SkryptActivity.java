@@ -63,6 +63,7 @@ public class SkryptActivity extends AppCompatActivity implements ResultHandler {
 
     @OnClick(R.id.button_start)
     public void start() {
+        timeStarted = Calendar.getInstance().getTimeInMillis();
         speechRecognizer.startListening(recognizerIntent);
     }
 
@@ -95,8 +96,9 @@ public class SkryptActivity extends AppCompatActivity implements ResultHandler {
     }
 
 
-
-    //    Handle results from speech recognition
+    /**
+     *   Handle results from speech recognition
+     */
 
     /**
      *
@@ -112,17 +114,18 @@ public class SkryptActivity extends AppCompatActivity implements ResultHandler {
     @Override
     public void handlePartialResult(String feedback) {
         feedbackView.setText(feedback);
+        Log.d("Partial Results", feedback);
     }
 
     @Override
     public void onComplete() {
         long timeFinished = Calendar.getInstance().getTimeInMillis();
         int duration = (int) ((timeFinished - timeStarted) / 1000);
-        feedbackView.append(String.format("\n\nFlow length: %ss", duration));
+        String flowLengthText = String.format("\n\nFlow length: %ss", duration);
+        feedbackView.append(flowLengthText);
+        Log.d("Complete", flowLengthText);
     }
 
     @Override
-    public void onStartSpeech() {
-        timeStarted = Calendar.getInstance().getTimeInMillis();
-    }
+    public void onStartSpeech() {}
 }

@@ -35,7 +35,6 @@ public class SpeechRecognitionListener implements RecognitionListener {
 
     @Override
     public void onEndOfSpeech() {
-        resultHandler.onComplete();
         Log.d("Speech", "End Speech");
     }
 
@@ -45,6 +44,8 @@ public class SpeechRecognitionListener implements RecognitionListener {
 
     @Override
     public void onResults(Bundle results) {
+        Log.d("Speech", "Results");
+        resultHandler.onComplete();
     }
 
     @Override
