@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SkryptActivity"
+    tools:showIn="@layout/activity_skrypt">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/button_start"
+        android:layout_alignParentTop="true">
+
+        <TextView
+            android:id="@+id/tv_feedback"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/button_start"
+            android:gravity="center_vertical|right"
+            android:padding="16dp"
+            android:textAppearance="@android:style/TextAppearance.Large"/>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/button_start"
+        style="?android:textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#373393"
+        android:padding="32dp"
+        android:text="Start"
+        android:textAllCaps="true"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"/>
+
+</RelativeLayout>
