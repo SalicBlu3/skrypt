@@ -21,6 +21,7 @@ public class SkryptActivity extends ActionBarActivity {
 
     @InjectView(R.id.pager)
     ViewPager pager;
+    private HomepagePagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +33,12 @@ public class SkryptActivity extends ActionBarActivity {
         setSupportActionBar(toolbar);
 
         // Set up Tabs
-        pager.setAdapter(new HomepagePagerAdapter(getSupportFragmentManager()));
+        adapter = new HomepagePagerAdapter(getSupportFragmentManager());
+        pager.setAdapter(adapter);
+    }
 
+    public void updateList() {
+        adapter.updateSavedSkryptList();
     }
 
 }

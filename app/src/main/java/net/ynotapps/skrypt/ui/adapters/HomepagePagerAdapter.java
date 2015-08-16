@@ -5,11 +5,14 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import net.ynotapps.skrypt.ui.fragments.SkryptFragment;
+import net.ynotapps.skrypt.ui.fragments.SkryptListFragment;
 
 public class HomepagePagerAdapter extends FragmentStatePagerAdapter {
 
     public static final int FRAGMENT_COUNT = 2;
     public static final String FLOW_TITLE = "Work on your Flow";
+    private SkryptFragment skryptFragment;
+    private SkryptListFragment skryptListFragment;
 
     public HomepagePagerAdapter(FragmentManager fm) {
         super(fm);
@@ -21,7 +24,7 @@ public class HomepagePagerAdapter extends FragmentStatePagerAdapter {
             case 0:
                 return FLOW_TITLE;
             default:
-                return "Something Else";
+                return "Saved Flows";
         }
     }
 
@@ -30,14 +33,20 @@ public class HomepagePagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                return new SkryptFragment();
+                skryptFragment = new SkryptFragment();
+                return skryptFragment;
             default:
-                return new Fragment();
+                skryptListFragment = new SkryptListFragment();
+                return skryptListFragment;
         }
     }
 
     @Override
     public int getCount() {
         return FRAGMENT_COUNT;
+    }
+
+    public void updateSavedSkryptList() {
+        skryptListFragment.update();
     }
 }

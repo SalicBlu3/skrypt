@@ -8,6 +8,7 @@ public class Skrypt extends SugarRecord {
 
     private Date timestamp;
     private String text;
+    private String title = "";
 
     public Skrypt() {
     }
@@ -33,11 +34,20 @@ public class Skrypt extends SugarRecord {
         this.text = text;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     @Override
     public String toString() {
         return "Skrypt{" +
                 "timestamp=" + timestamp +
                 ", text='" + text + '\'' +
+                ", title='" + title + '\'' +
                 '}';
     }
 }

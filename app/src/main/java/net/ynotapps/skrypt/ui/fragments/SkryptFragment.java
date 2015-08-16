@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import net.ynotapps.skrypt.R;
 import net.ynotapps.skrypt.model.dto.Skrypt;
+import net.ynotapps.skrypt.ui.SkryptActivity;
 import net.ynotapps.skrypt.utils.SpeechRecognitionListener;
 
 import java.util.Calendar;
@@ -150,6 +151,10 @@ public class SkryptFragment extends BaseFragment implements SpeechRecognitionLis
 
             // Debug
             Log.d("Skrypt saved", skrypt.toString());
+
+            // Update List
+            ((SkryptActivity) getActivity()).updateList();
+
             return true;
         }
 
