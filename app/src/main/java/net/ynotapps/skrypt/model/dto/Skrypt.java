@@ -8,7 +8,7 @@ public class Skrypt extends SugarRecord {
 
     private Date timestamp;
     private String text;
-    private String title = "";
+    private String title = "[No title]";
 
     public Skrypt() {
     }
@@ -40,6 +40,10 @@ public class Skrypt extends SugarRecord {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public boolean hasTimestamp() {
+        return timestamp != null;
     }
 
     @Override

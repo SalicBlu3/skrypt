@@ -13,6 +13,7 @@ import android.widget.TextView;
 import net.ynotapps.skrypt.R;
 import net.ynotapps.skrypt.model.dto.Skrypt;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class SkryptListFragment extends BaseFragment {
@@ -79,7 +80,8 @@ public class SkryptListFragment extends BaseFragment {
                 view = View.inflate(context, R.layout.list_item_skrypt, null);
                 TextView tvTitle = (TextView) view.findViewById(R.id.tv_title);
                 TextView tvSkrypt = (TextView) view.findViewById(R.id.tv_skrypt);
-                viewHolder = new ViewHolder(tvTitle, tvSkrypt);
+                TextView tvDate = (TextView) view.findViewById(R.id.tv_date);
+                viewHolder = new ViewHolder(tvTitle, tvSkrypt, tvDate);
                 view.setTag(viewHolder);
             } else {
                 viewHolder = (ViewHolder) view.getTag();
@@ -89,15 +91,22 @@ public class SkryptListFragment extends BaseFragment {
             viewHolder.getTitleView().setText(bean.getTitle());
             viewHolder.getSkryptView().setText(bean.getText());
 
+
+            if (bean.hasTimestamp()) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                viewHolder.getDateView().setText(sdf.format(bean.getTimestamp()));
+            }
+
             return view;
         }
 
         private class ViewHolder {
-            private TextView titleView, skryptView;
+            private TextView titleView, skryptView, dateView;
 
-            public ViewHolder(TextView titleView, TextView skryptView) {
+            public ViewHolder(TextView titleView, TextView skryptView, TextView dateView) {
                 this.titleView = titleView;
                 this.skryptView = skryptView;
+                this.dateView = dateView;
             }
 
             public TextView getTitleView() {
@@ -106,6 +115,10 @@ public class SkryptListFragment extends BaseFragment {
 
             public TextView getSkryptView() {
                 return skryptView;
+            }
+
+            public TextView getDateView() {
+                return dateView;
             }
         }
     }
