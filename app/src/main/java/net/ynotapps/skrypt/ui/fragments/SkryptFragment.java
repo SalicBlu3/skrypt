@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,14 +32,22 @@ public class SkryptFragment extends BaseFragment implements SpeechRecognitionLis
     public static final String FRAGMENT_ID = "Skrypt";
     private static final String PROMPT_USER = "Start your flow...";
     private static final String PROMPT_HAS_BEGUN = "Go!";
+
     @InjectView(R.id.button_start)
     public Button start;
+
     @InjectView(R.id.tv_feedback)
     public TextView feedbackView;
+
     @InjectView(R.id.tv_skrypt)
     public TextView skryptView;
+
     @InjectView(R.id.tv_result)
     public TextView resultView;
+
+    @InjectView(R.id.scroll_skrypt)
+    public ScrollView scrollView;
+
     private SpeechRecognizer speechRecognizer;
     private Intent recognizerIntent;
     private long timeStarted;
@@ -117,7 +126,7 @@ public class SkryptFragment extends BaseFragment implements SpeechRecognitionLis
 
 
     /**
-     *   Set up Actionbar Menu
+     * Set up Actionbar Menu
      */
 
     @Override
@@ -149,7 +158,7 @@ public class SkryptFragment extends BaseFragment implements SpeechRecognitionLis
 
 
     /**
-     *   Handle results from speech recognition
+     * Handle results from speech recognition
      */
 
     @Override
@@ -158,10 +167,12 @@ public class SkryptFragment extends BaseFragment implements SpeechRecognitionLis
     }
 
     @Override
-    public void onResult(String feedback) {}
+    public void onResult(String feedback) {
+    }
 
     /**
      * Displays to the user a real time feed of their skryptText
+     *
      * @param feedback
      */
     @Override
@@ -172,6 +183,10 @@ public class SkryptFragment extends BaseFragment implements SpeechRecognitionLis
 
         // Store skryptText
         skryptText = feedback;
+
+        // Ensure that ScrollView text displays newest text
+        scrollView.setSmoothScrollingEnabled(true);
+        scrollView.fullScroll(View.FOCUS_DOWN);
 
         // Debug
         Log.d("Partial Results", feedback);
@@ -193,6 +208,9 @@ public class SkryptFragment extends BaseFragment implements SpeechRecognitionLis
         String flowLengthText = String.format("You had a %d second flow.\nYou spun up %d words", duration, numberOfWords);
         resultView.setText(flowLengthText);
         resultView.setVisibility(View.VISIBLE);
+
+        // Result covers skrypt so auto scroll the skrypt view to display
+        scrollView.fullScroll(View.FOCUS_DOWN);
 
         // Enable start button
         isStarted = false;
