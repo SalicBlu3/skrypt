@@ -4,17 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SkryptActivity"
-    tools:showIn="@layout/activity_skrypt">
+    android:animateLayoutChanges="true"
+    tools:context=".SkryptActivity">
+
+    <TextView
+        android:id="@+id/tv_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Start your flow..."
+        android:textAppearance="?android:textAppearanceMedium"/>
+
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/button_start"
-        android:layout_alignParentTop="true">
+        android:layout_above="@+id/tv_result"
+        android:layout_below="@+id/tv_feedback">
 
         <TextView
-            android:id="@+id/tv_feedback"
+            android:id="@+id/tv_skrypt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/button_start"
@@ -22,6 +34,18 @@
             android:padding="16dp"
             android:textAppearance="@android:style/TextAppearance.Large"/>
     </ScrollView>
+
+    <TextView
+        android:id="@+id/tv_result"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_start"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Start your flow..."
+        android:textAppearance="?android:textAppearanceMedium"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/button_start"

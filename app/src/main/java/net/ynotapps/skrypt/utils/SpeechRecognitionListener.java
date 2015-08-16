@@ -18,6 +18,7 @@ public class SpeechRecognitionListener implements RecognitionListener {
     @Override
     public void onReadyForSpeech(Bundle params) {
         Log.d("Speech", "Ready");
+        resultHandler.onStartSpeech();
     }
 
     @Override

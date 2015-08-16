@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import net.ynotapps.skrypt.R;
 import net.ynotapps.skrypt.model.dto.Skrypt;
@@ -21,21 +22,28 @@ import net.ynotapps.skrypt.utils.SpeechRecognitionListener;
 
 import java.util.Calendar;
 
+import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
 public class SkryptFragment extends BaseFragment implements SpeechRecognitionListener.ResultHandler {
 
     public static final String FRAGMENT_ID = "Skrypt";
+    private static final String PROMPT_USER = "Start your flow...";
+    private static final String PROMPT_HAS_BEGUN = "Go!";
     @InjectView(R.id.button_start)
     public Button start;
-
     @InjectView(R.id.tv_feedback)
     public TextView feedbackView;
-
+    @InjectView(R.id.tv_skrypt)
+    public TextView skryptView;
+    @InjectView(R.id.tv_result)
+    public TextView resultView;
     private SpeechRecognizer speechRecognizer;
     private Intent recognizerIntent;
     private long timeStarted;
+    private String skryptText = "";
+    private boolean isStarted = false;
 
     @Override
     public String getFragmentTag() {
@@ -45,12 +53,17 @@ public class SkryptFragment extends BaseFragment implements SpeechRecognitionLis
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_skrypt, container, false);
-
-
+        ButterKnife.inject(this, view);
+        feedbackView.setText(PROMPT_USER);
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        setupSpeechRecognizer();
     }
 
     private void setupSpeechRecognizer() {
@@ -73,8 +86,27 @@ public class SkryptFragment extends BaseFragment implements SpeechRecognitionLis
 
     @OnClick(R.id.button_start)
     public void start() {
+
+        // Avoid double start
+        if (isStarted) {
+            return;
+        }
+
+        // Clear out skryptText
+        if (!skryptText.trim().isEmpty()) {
+            skryptView.setText("");
+        }
+
+        // Reset Visibility of Result View
+        resultView.setVisibility(View.GONE);
+
+        // Set up variables
         timeStarted = Calendar.getInstance().getTimeInMillis();
+        isStarted = true;
+
+        // Atart listening
         speechRecognizer.startListening(recognizerIntent);
+
     }
 
     @Override
@@ -82,6 +114,11 @@ public class SkryptFragment extends BaseFragment implements SpeechRecognitionLis
         super.onDestroyView();
         speechRecognizer.destroy();
     }
+
+
+    /**
+     *   Set up Actionbar Menu
+     */
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -94,8 +131,15 @@ public class SkryptFragment extends BaseFragment implements SpeechRecognitionLis
         int id = item.getItemId();
 
         if (id == R.id.action_save) {
-            Skrypt skrypt = new Skrypt(Calendar.getInstance().getTime(), feedbackView.getText().toString());
+
+            // Save skrypt
+            Skrypt skrypt = new Skrypt(Calendar.getInstance().getTime(), skryptText);
             skrypt.save();
+
+            // Give feedback to user
+            Toast.makeText(getActivity(), "Skrypt Saved", Toast.LENGTH_SHORT).show();
+
+            // Debug
             Log.d("Skrypt saved", skrypt.toString());
             return true;
         }
@@ -108,32 +152,53 @@ public class SkryptFragment extends BaseFragment implements SpeechRecognitionLis
      *   Handle results from speech recognition
      */
 
-    /**
-     *
-     * @param feedback
-     */
+    @Override
+    public void onStartSpeech() {
+        feedbackView.setText(PROMPT_HAS_BEGUN);
+    }
+
     @Override
     public void onResult(String feedback) {}
 
     /**
-     * Displays to the user a real time feed of their skrypt
+     * Displays to the user a real time feed of their skryptText
      * @param feedback
      */
     @Override
     public void handlePartialResult(String feedback) {
-        feedbackView.setText(feedback);
+
+        // User Feedback
+        skryptView.setText(feedback);
+
+        // Store skryptText
+        skryptText = feedback;
+
+        // Debug
         Log.d("Partial Results", feedback);
     }
 
     @Override
     public void onComplete() {
+
+        // Calculate metrics
+
+        // Get Duration
         long timeFinished = Calendar.getInstance().getTimeInMillis();
         int duration = (int) ((timeFinished - timeStarted) / 1000);
-        String flowLengthText = String.format("\n\nFlow length: %ss", duration);
-        feedbackView.append(flowLengthText);
-        Log.d("Complete", flowLengthText);
+
+        // Get Number of words
+        int numberOfWords = skryptText.split(" ").length;
+
+        // Display result
+        String flowLengthText = String.format("You had a %d second flow.\nYou spun up %d words", duration, numberOfWords);
+        resultView.setText(flowLengthText);
+        resultView.setVisibility(View.VISIBLE);
+
+        // Enable start button
+        isStarted = false;
+
+        // Debug
+        Log.d("Skrypt - Complete", flowLengthText);
     }
 
-    @Override
-    public void onStartSpeech() {}
 }
