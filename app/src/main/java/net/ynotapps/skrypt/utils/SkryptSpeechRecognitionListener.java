@@ -1,5 +1,6 @@
 package net.ynotapps.skrypt.utils;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.SpeechRecognizer;
@@ -7,11 +8,11 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-public class SpeechRecognitionListener implements RecognitionListener {
+public class SkryptSpeechRecognitionListener implements RecognitionListener {
 
     private ResultHandler resultHandler;
 
-    public SpeechRecognitionListener(ResultHandler resultHandler) {
+    public SkryptSpeechRecognitionListener(ResultHandler resultHandler, Context context) {
         this.resultHandler = resultHandler;
     }
 
@@ -31,8 +32,7 @@ public class SpeechRecognitionListener implements RecognitionListener {
     }
 
     @Override
-    public void onBufferReceived(byte[] buffer) {
-    }
+    public void onBufferReceived(byte[] buffer) {}
 
     @Override
     public void onEndOfSpeech() {

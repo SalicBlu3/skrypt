@@ -1,6 +1,7 @@
 package net.ynotapps.skrypt.ui.fragments;
 
 import android.content.Intent;
+import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -12,30 +13,31 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
 
 import net.ynotapps.skrypt.R;
 import net.ynotapps.skrypt.model.dto.Skrypt;
 import net.ynotapps.skrypt.ui.SkryptActivity;
-import net.ynotapps.skrypt.utils.SpeechRecognitionListener;
+import net.ynotapps.skrypt.utils.SkryptSpeechRecognitionListener;
 
 import java.util.Calendar;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
+import butterknife.OnCheckedChanged;
 
-public class SkryptFragment extends BaseFragment implements SpeechRecognitionListener.ResultHandler {
+public class SkryptFragment extends BaseFragment implements SkryptSpeechRecognitionListener.ResultHandler {
 
     public static final String FRAGMENT_ID = "Skrypt";
     private static final String PROMPT_USER = "Start your flow...";
     private static final String PROMPT_HAS_BEGUN = "Go!";
+    private static final String LOG_TAG = "SkryptFragment";
 
     @InjectView(R.id.button_start)
-    public Button start;
+    public ToggleButton start;
 
     @InjectView(R.id.tv_feedback)
     public TextView feedbackView;
@@ -53,7 +55,7 @@ public class SkryptFragment extends BaseFragment implements SpeechRecognitionLis
     private Intent recognizerIntent;
     private long timeStarted;
     private String skryptText = "";
-    private boolean isStarted = false;
+    private MediaRecorder mRecorder;
 
     @Override
     public String getFragmentTag() {
@@ -87,44 +89,20 @@ public class SkryptFragment extends BaseFragment implements SpeechRecognitionLis
                 getActivity().getPackageName());
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 30000);
-        recognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 10000);
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 3000);
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 3000);
 
         // Set up listener
-        speechRecognizer.setRecognitionListener(new SpeechRecognitionListener(this));
-    }
-
-
-    @OnClick(R.id.button_start)
-    public void start() {
-
-        // Avoid double start
-        if (isStarted) {
-            return;
-        }
-
-        // Clear out skryptText
-        if (!skryptText.trim().isEmpty()) {
-            skryptView.setText("");
-        }
-
-        // Reset Visibility of Result View
-        resultView.setVisibility(View.GONE);
-
-        // Set up variables
-        timeStarted = Calendar.getInstance().getTimeInMillis();
-        isStarted = true;
-
-        // Atart listening
-        speechRecognizer.startListening(recognizerIntent);
-
+        speechRecognizer.setRecognitionListener(new SkryptSpeechRecognitionListener(this, getActivity()));
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        speechRecognizer.stopListening();
+        speechRecognizer.cancel();
         speechRecognizer.destroy();
     }
-
 
     /**
      * Set up Actionbar Menu
@@ -161,14 +139,42 @@ public class SkryptFragment extends BaseFragment implements SpeechRecognitionLis
         return super.onOptionsItemSelected(item);
     }
 
+    @OnCheckedChanged(R.id.button_start)
+    public void onChecked(boolean checked) {
+        if (checked) {
+            reset();
+            startDictating();
+        } else {
+            stopDictating();
+        }
+    }
 
-    /**
-     * Handle results from speech recognition
-     */
+    private void reset() {
+        // Reset Visibility of Result View
+        resultView.setVisibility(View.GONE);
 
-    @Override
-    public void onStartSpeech() {
-        feedbackView.setText(PROMPT_HAS_BEGUN);
+        // Clear out skryptText
+        if (!skryptText.trim().isEmpty()) {
+            skryptView.setText("");
+        }
+    }
+
+    private void startDictating() {
+        // Set up starting time
+        timeStarted = Calendar.getInstance().getTimeInMillis();
+
+        // Start listening
+        speechRecognizer.startListening(recognizerIntent);
+    }
+
+    private void stopDictating() {
+        speechRecognizer.stopListening();
+    }
+
+    private void stopRecording() {
+        mRecorder.stop();
+        mRecorder.release();
+        mRecorder = null;
     }
 
     @Override
@@ -197,6 +203,15 @@ public class SkryptFragment extends BaseFragment implements SpeechRecognitionLis
         Log.d("Partial Results", feedback);
     }
 
+    /**
+     * Handle results from speech recognition
+     */
+
+    @Override
+    public void onStartSpeech() {
+        feedbackView.setText(PROMPT_HAS_BEGUN);
+    }
+
     @Override
     public void onComplete() {
 
@@ -217,11 +232,9 @@ public class SkryptFragment extends BaseFragment implements SpeechRecognitionLis
         // Result covers skrypt so auto scroll the skrypt view to display
         scrollView.fullScroll(View.FOCUS_DOWN);
 
-        // Enable start button
-        isStarted = false;
-
         // Debug
         Log.d("Skrypt - Complete", flowLengthText);
+
     }
 
 }

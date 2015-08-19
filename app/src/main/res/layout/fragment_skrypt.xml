@@ -15,7 +15,6 @@
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:padding="16dp"
-        android:text="Start your flow..."
         android:textAppearance="?android:textAppearanceMedium"/>
 
 
@@ -48,7 +47,7 @@
         android:textAppearance="?android:textAppearanceMedium"
         android:visibility="gone"/>
 
-    <Button
+    <ToggleButton
         android:id="@+id/button_start"
         style="?android:textAppearanceMedium"
         android:layout_width="match_parent"
@@ -56,9 +55,10 @@
         android:layout_alignParentBottom="true"
         android:background="#373393"
         android:padding="32dp"
-        android:text="Start"
         android:textAllCaps="true"
         android:textColor="@android:color/white"
+        android:textOff="Start Flow"
+        android:textOn="Stop Flow"
         android:textStyle="bold"/>
 
 </RelativeLayout>
