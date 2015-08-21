@@ -21,6 +21,9 @@ import android.widget.ToggleButton;
 import net.ynotapps.skrypt.R;
 import net.ynotapps.skrypt.model.dto.Skrypt;
 import net.ynotapps.skrypt.ui.SkryptActivity;
+import net.ynotapps.skrypt.ui.controllers.PointController;
+import net.ynotapps.skrypt.ui.controllers.PromptController;
+import net.ynotapps.skrypt.utils.PromptUtils;
 import net.ynotapps.skrypt.utils.SkryptSpeechRecognitionListener;
 
 import java.util.Calendar;
@@ -39,9 +42,6 @@ public class SkryptFragment extends BaseFragment implements SkryptSpeechRecognit
     @InjectView(R.id.button_start)
     public ToggleButton start;
 
-    @InjectView(R.id.tv_feedback)
-    public TextView feedbackView;
-
     @InjectView(R.id.tv_skrypt)
     public TextView skryptView;
 
@@ -51,11 +51,24 @@ public class SkryptFragment extends BaseFragment implements SkryptSpeechRecognit
     @InjectView(R.id.scroll_skrypt)
     public ScrollView scrollView;
 
+    @InjectView(R.id.tally)
+    public TextView pointView;
+
+    @InjectView(R.id.prompt)
+    public TextView promptView;
+
     private SpeechRecognizer speechRecognizer;
     private Intent recognizerIntent;
     private long timeStarted;
     private String skryptText = "";
     private MediaRecorder mRecorder;
+
+    private PromptUtils promptUtils = new PromptUtils();
+    private String prompt = "";
+
+    private PointController pointController;
+    private PromptController promptController;
+
 
     @Override
     public String getFragmentTag() {
@@ -68,7 +81,10 @@ public class SkryptFragment extends BaseFragment implements SkryptSpeechRecognit
         setHasOptionsMenu(true);
         View view = inflater.inflate(R.layout.fragment_skrypt, container, false);
         ButterKnife.inject(this, view);
-        feedbackView.setText(PROMPT_USER);
+
+        pointController = new PointController(pointView);
+        promptController = new PromptController(promptView);
+
         return view;
     }
 
@@ -157,6 +173,8 @@ public class SkryptFragment extends BaseFragment implements SkryptSpeechRecognit
         if (!skryptText.trim().isEmpty()) {
             skryptView.setText("");
         }
+
+        pointController.reset();
     }
 
     private void startDictating() {
@@ -177,14 +195,17 @@ public class SkryptFragment extends BaseFragment implements SkryptSpeechRecognit
         mRecorder = null;
     }
 
+
+    /**
+     * Handle results from speech recognition
+     */
+
     @Override
     public void onResult(String feedback) {
     }
 
     /**
      * Displays to the user a real time feed of their skryptText
-     *
-     * @param feedback
      */
     @Override
     public void handlePartialResult(String feedback) {
@@ -195,6 +216,12 @@ public class SkryptFragment extends BaseFragment implements SkryptSpeechRecognit
         // Store skryptText
         skryptText = feedback;
 
+        // Check if we hit the prompt
+        if (skryptText.contains(prompt)) {
+            prompt = promptController.showNext();
+            pointController.tallyUp();
+        }
+
         // Ensure that ScrollView text displays newest text
         scrollView.setSmoothScrollingEnabled(true);
         scrollView.fullScroll(View.FOCUS_DOWN);
@@ -203,13 +230,10 @@ public class SkryptFragment extends BaseFragment implements SkryptSpeechRecognit
         Log.d("Partial Results", feedback);
     }
 
-    /**
-     * Handle results from speech recognition
-     */
+
 
     @Override
     public void onStartSpeech() {
-        feedbackView.setText(PROMPT_HAS_BEGUN);
     }
 
     @Override

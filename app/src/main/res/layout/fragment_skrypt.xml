@@ -7,15 +7,9 @@
     android:animateLayoutChanges="true"
     tools:context=".SkryptActivity">
 
-    <TextView
-        android:id="@+id/tv_feedback"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:padding="16dp"
-        android:textAppearance="?android:textAppearanceMedium"/>
+    <include
+        android:id="@+id/stats"
+        layout="@layout/fragment_header_game_stats"/>
 
 
     <ScrollView
@@ -23,12 +17,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/tv_result"
-        android:layout_below="@+id/tv_feedback">
+        android:layout_below="@+id/stats">
 
         <TextView
             android:id="@+id/tv_skrypt"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_above="@+id/button_start"
             android:gravity="center_vertical|right"
             android:padding="16dp"
