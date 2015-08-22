@@ -23,6 +23,7 @@ import net.ynotapps.skrypt.model.dto.Skrypt;
 import net.ynotapps.skrypt.ui.SkryptActivity;
 import net.ynotapps.skrypt.ui.controllers.PointController;
 import net.ynotapps.skrypt.ui.controllers.PromptController;
+import net.ynotapps.skrypt.ui.controllers.SkryptController;
 import net.ynotapps.skrypt.utils.PromptUtils;
 import net.ynotapps.skrypt.utils.SkryptSpeechRecognitionListener;
 
@@ -68,6 +69,7 @@ public class SkryptFragment extends BaseFragment implements SkryptSpeechRecognit
 
     private PointController pointController;
     private PromptController promptController;
+    private SkryptController skryptController;
 
 
     @Override
@@ -84,6 +86,7 @@ public class SkryptFragment extends BaseFragment implements SkryptSpeechRecognit
 
         pointController = new PointController(pointView);
         promptController = new PromptController(promptView);
+        skryptController = new SkryptController(skryptView);
 
         return view;
     }
@@ -92,6 +95,9 @@ public class SkryptFragment extends BaseFragment implements SkryptSpeechRecognit
     public void onResume() {
         super.onResume();
         setupSpeechRecognizer();
+        pointController.reset();
+        promptController.reset();
+        skryptController.reset();
     }
 
     private void setupSpeechRecognizer() {
@@ -104,7 +110,7 @@ public class SkryptFragment extends BaseFragment implements SkryptSpeechRecognit
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
                 getActivity().getPackageName());
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
-        recognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 30000);
+        recognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_MINIMUM_LENGTH_MILLIS, 10000);
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_COMPLETE_SILENCE_LENGTH_MILLIS, 3000);
         recognizerIntent.putExtra(RecognizerIntent.EXTRA_SPEECH_INPUT_POSSIBLY_COMPLETE_SILENCE_LENGTH_MILLIS, 3000);
 
@@ -210,11 +216,8 @@ public class SkryptFragment extends BaseFragment implements SkryptSpeechRecognit
     @Override
     public void handlePartialResult(String feedback) {
 
-        // User Feedback
-        skryptView.setText(feedback);
-
-        // Store skryptText
-        skryptText = feedback;
+        // Process Skrypt
+        skryptController.updateSkrypt(feedback);
 
         // Check if we hit the prompt
         if (skryptText.contains(prompt)) {
