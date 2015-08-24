@@ -19,7 +19,6 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import net.ynotapps.skrypt.R;
-import net.ynotapps.skrypt.model.dto.Skrypt;
 import net.ynotapps.skrypt.ui.SkryptActivity;
 import net.ynotapps.skrypt.ui.controllers.PointController;
 import net.ynotapps.skrypt.ui.controllers.PromptController;
@@ -143,14 +142,10 @@ public class SkryptFragment extends BaseFragment implements SkryptSpeechRecognit
         if (id == R.id.action_save) {
 
             // Save skrypt
-            Skrypt skrypt = new Skrypt(Calendar.getInstance().getTime(), skryptText);
-            skrypt.save();
+            skryptController.saveSkrypt();
 
             // Give feedback to user
             Toast.makeText(getActivity(), "Skrypt Saved", Toast.LENGTH_SHORT).show();
-
-            // Debug
-            Log.d("Skrypt saved", skrypt.toString());
 
             // Update List
             ((SkryptActivity) getActivity()).updateList();
@@ -220,7 +215,10 @@ public class SkryptFragment extends BaseFragment implements SkryptSpeechRecognit
         skryptController.updateSkrypt(feedback);
 
         // Check if we hit the prompt
-        if (skryptText.contains(prompt)) {
+
+        // Ignore empty prompts
+        String currentPrompt = promptController.getCurrentPrompt();
+        if (!currentPrompt.trim().isEmpty() && skryptController.contains(currentPrompt)) {
             prompt = promptController.showNext();
             pointController.tallyUp();
         }

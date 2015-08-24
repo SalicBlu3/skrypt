@@ -28,4 +28,8 @@ public class PromptController {
         currentPrompt = "";
         displayCurrentPrompt();
     }
+
+    public String getCurrentPrompt() {
+        return currentPrompt;
+    }
 }
