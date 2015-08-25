@@ -5,6 +5,7 @@ import android.widget.TextView;
 import net.ynotapps.skrypt.utils.PromptUtils;
 
 public class PromptController {
+
     private PromptUtils promptUtils = new PromptUtils();
     private TextView promptView;
     private String currentPrompt = "";
@@ -26,10 +27,24 @@ public class PromptController {
 
     public void reset() {
         currentPrompt = "";
+        promptUtils.reset();
         displayCurrentPrompt();
     }
 
     public String getCurrentPrompt() {
         return currentPrompt;
+    }
+
+    public boolean getPoint(String text) {
+
+        if (currentPrompt.trim().isEmpty()) {
+            return false;
+        }
+
+        if (text.contains(currentPrompt)) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

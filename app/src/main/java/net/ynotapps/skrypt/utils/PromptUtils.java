@@ -27,4 +27,8 @@ public class PromptUtils {
     public boolean skryptContains(String skrypt, String prompt) {
         return skrypt.contains(prompt);
     }
+
+    public void reset() {
+        index = 0;
+    }
 }
